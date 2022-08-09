@@ -37,7 +37,7 @@ def applytechnicals(df):
 
 df = getminutedata('ADAUSDT', '5m', '2000')
 applytechnicals(df)
-print(df)
+#print(df)
 
 
 class Signals:
@@ -63,15 +63,16 @@ class Signals:
                                   & (self.df.macd > 0), 1, 0)
 
     def decide_based_on_RSI(self):
-        self.df['Buy'] = np.where(
-            (self.df['EMA50'] > self.df['EMA200'])
-            & (self.df.rsi < 30), 1, 0)
+        self.df['Buy'] = np.where((self.df['rsi'] < 30) & (self.df['EMA50'] > self.df['EMA200']), 1, 0)
 
 
 inst = Signals(df, 25)
-#inst.decide_based_on_RSI()
-inst.decide()
-df[df.Buy == 1]
+inst.decide_based_on_RSI()
+pd.options.display.width= None
+pd.options.display.max_columns= None
+pd.set_option('display.max_rows', 3000)
+pd.set_option('display.max_columns', 3000)
+print(df[df.Buy == 1])
 
 
 def strategy(pair, qty, open_position=False):
@@ -123,10 +124,47 @@ def strategy_RSI_EMA(pair, qty, open_position=False):
     df = getminutedata(pair, '5m', '2000')
     applytechnicals(df)
     inst = Signals(df, 25)
-    inst.decide()
+    inst.decide_based_on_RSI()
     print(f'current candle Close is ' + str(df.Close.iloc[-1]))
+    print(f'current RSI is ' + str(df.rsi[-1]))
     clear = "\n" * 3
     print(clear)
+    if df.Buy.iloc[-1]:
+        order = client.create_order(symbol=pair,
+                                    side='BUY',
+                                    type='MARKET',
+                                    quantity=qty)
+        print(order)
+        buyprice = float(order['fills'][0]['price'])
+
+        open_position = True
+        while open_position:
+            time.sleep(0.5)
+            df = getminutedata(pair, '1m', '2')
+            print(f'OP - current candle Close ' + str(df.Close.iloc[-1]))
+            print(f'Buying price is ' + str(buyprice))
+            print('-----------------------------------------')
+            print(f'current RSI is ' + str(df.rsi[-1]))
+            print(f'current Stop Loss is ' + str(buyprice * 0.99))
+
+            clear = "\n" * 2
+            print(clear)
+
+            if df.Close[-1] <= buyprice * 0.99:
+                order = client.create_order(symbol=pair,
+                                            side='SELL',
+                                            type='MARKET',
+                                            quantity=qty)
+                print(order)
+                break
+
+            if df.rsi[-1] >= 67:
+                order = client.create_order(symbol=pair,
+                                            side='SELL',
+                                            type='MARKET',
+                                            quantity=qty)
+                print(order)
+                break
 
 
 while True:

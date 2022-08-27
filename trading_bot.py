@@ -18,7 +18,7 @@ def displayOptions():
     pd.set_option('display.max_columns', 3000)
 
 displayOptions()
-df = Data.getMinuteData('ADAUSDT', '5m', '2000')
+df = Data.getMinuteData('BTCBUSD', '5m', '2000')
 Strategy.applytechnicals(df)
 #print(df)
 

@@ -27,4 +27,4 @@ class Signal:
     """
 
     def decide_based_on_RSI(self):
-        self.df['Buy'] = np.where((self.df['rsi'] < 30) & (self.df['EMA50'] > self.df['EMA200']), 1, 0)
+        self.df['Buy'] = np.where((self.df['rsi'] <= 30) & (self.df['EMA50'] > self.df['EMA200']), 1, 0)

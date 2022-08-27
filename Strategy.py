@@ -84,7 +84,8 @@ def strategy_RSI_EMA(pair, qty, open_position=False):
         open_position = True
         while open_position:
             time.sleep(0.5)
-            df = Data.getMinuteData(pair, '1m', '2')
+            df = Data.getMinuteData(pair, '5m', '2000')
+            applytechnicals(df)
             print(f'OP - current candle Close ' + str(df.Close.iloc[-1]))
             print(f'Buying price is ' + str(buyprice))
             print('-----------------------------------------')

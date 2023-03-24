@@ -1,4 +1,0 @@
-# Hiding the secret keys
-
-API_KEY = "OnYtZaENGz5szLK5QAwTsz2EDrsc8Rdu9DQzLqzup1xEilqzzWyFuLku8eOhASrT"
-SECRET_KEY = "GmZmw5BcKNCk370iKtbdhqfsENpFt9QJpNLAoxBV4Lexxc9VWC49460jfnZkmxq4"
